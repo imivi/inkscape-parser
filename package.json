@@ -6,9 +6,9 @@
   "types": "dist/index.d.ts",
   "bin": "dist/cli.js",
   "scripts": {
-    "dev": "tsx watch src/test",
+    "dev": "tsx watch test/test",
     "build": "tsc",
-    "test": "test"
+    "test": "echo test"
   },
   "author": "imivi",
   "license": "MIT",
