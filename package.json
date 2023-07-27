@@ -1,7 +1,8 @@
 {
   "name": "inkscape-parser",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Reads the content of any inkscape SVG",
+  "keywords": ["svg", "inkscape", "parser", "cli"],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": "dist/cli.js",
