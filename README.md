@@ -54,6 +54,7 @@ This package is built on top of [svg-parser](https://github.com/Rich-Harris/svg-
 
 * The output is a simple array rather than a tree, making it easy to display and convert into CSV or other formats.
 * Any multi-line text is merged into a single element from multiple <tspan> tags.
+* Additionally, any html entities (&gt; &lt; etc) in text elements are automatically unescaped.
 * The inkscape label for each element is included.
 * Each element lists all of its parent layers (delimited by a dot: for example "root_layer.sub_layer.sub_sub_layer") according to their inkscape labels.
 * Includes a CLI for convenience.

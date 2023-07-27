@@ -88,7 +88,12 @@ function visitNode(node: InputSvgElement, parentLayerName: string|null): ParsedE
     }
 
     if(childrenNodes && childrenNodes.length > 0) {
-        const newLayerName = parentLayerName ? [parentLayerName,layerName].join(".") : layerName
+        let newLayerName = parentLayerName || layerName
+        if(parentLayerName && layerName) {
+            newLayerName = [parentLayerName,layerName].join(".")
+        }
+        
+        // const newLayerName = parentLayerName ? [parentLayerName,layerName].join(".") : layerName
         return childrenNodes.map(node => visitNode(node, newLayerName || null))
     }
     else {
