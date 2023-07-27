@@ -1,6 +1,10 @@
 # Inkscape-parser
 
-Inkscape-parser parses the elements of an Inkscape SVG file (shapes, text, paths) into an array of objects. Full Typescript support.
+![Inkscape-parser banner](/docs/banner.png)
+
+Inkscape-parser parses the elements of an Inkscape SVG file (shapes, text, paths, etc) into an array of objects.
+
+Comes with full Typescript support.
 
 [Get it on NPM](https://www.npmjs.com/package/inkscape-parser): `npm install inkscape-parser`
 
@@ -62,12 +66,12 @@ You can install it [as an NPM package](https://www.npmjs.com/package/inkscape-pa
 
 `npm install inkscape-parser`
 
-Then import it the `parseInkscape` function from this package:
+Then import the `parseInkscape` function from this package:
 
 ```js
 import { parseInkscape } from "inkscape-parser";
 
-// The inkscape svg is provided as a string
+// You should provide the inkscape svg as a string
 const svgString = `
     <?xml version="1.0" encoding="UTF-8" standalone="no"?>
     <!-- Created with Inkscape (http://www.inkscape.org/) -->
@@ -82,7 +86,7 @@ const svgString = `
     [...]
 `
 
-// parseInkscape returns an object with the parsed SVG elements
+// parseInkscape() returns an object with the parsed SVG elements
 const { elements } = parseInkscape(svgString)
 
 console.log(elements)
@@ -129,8 +133,9 @@ Output:
 }
 ```
 
-## Use via the CLI (requires Node.js)
+### Use via the CLI (requires Node.js)
 
 `npx inkscape-parser ./drawing.svg ./output.json`
 
-Where *INPUT_SVG* is the path to any inkscape file, and *OUTPUT_JSON* is the path where the parsed data will be saved (JSON format).
+* the first argument is the path to any inkscape file
+* the second argument is the path where the parsed data will be saved (JSON format)
