@@ -1,27 +1,43 @@
 import { parse } from "svg-parser"
-import { SvgElement, SvgRoot, ParsedElement } from "./types"
+import { SvgElement, SvgRoot, InputSvgElement } from "./types"
+import { unescapeText } from "./utils/unescapeText"
+
+export {
+    SvgElement,
+    SvgRoot,
+    InputSvgElement,
+}
 
 
 
 type Options = {
-    flat: false | number
+    // flat: false | number
     include: string[]
     exclude: string[]
+    unescape: boolean
 }
 
 const defaultOptions: Options = {
-    flat: 9,
+    // flat: 9,
     exclude: ["sodipodi:namedview", "defs"],
     include: [],
+    unescape: true,
+}
+
+
+type Output = {
+    unprocessed: SvgRoot,
+    pageProperties: Record<string, string | number>,
+    elements: SvgElement[],
 }
 
 /**
  * Parse the content of any inkscape SVG.
  * @param svgString The source inkscape SVG as a string
- * @param customOptions 
+ * @param options
  * @returns object: { unprocessed, pageProperties, elements }
  */
-export function parseInkscape(svgString: string, customOptions: Partial<Options> = {}) {
+export function parseInkscape(svgString: string, customOptions: Partial<Options> = {}): Output {
 
     const options   = { ...defaultOptions, ...customOptions }
     const includeSet = new Set(options.include)
@@ -31,39 +47,39 @@ export function parseInkscape(svgString: string, customOptions: Partial<Options>
 
     // The root element contains the document size and metadata
     const rootElement = svgTree.children[0]
-    const svgElements = rootElement.children as SvgElement[]
+    const svgElements = rootElement.children as InputSvgElement[]
 
     // Parse elements and filter out those excluded
-    const elements = parseElements(svgElements, options.flat || 0)
+    const elements = parseElements(svgElements)
         .filter(element => {
-            if(includeSet.size>0 && !includeSet.has(element.type))  return false
-            if(excludeSet.size>0 && excludeSet.has(element.type))   return false
+            if(element.type && includeSet.size>0 && !includeSet.has(element.type))  return false
+            if(element.type && excludeSet.size>0 && excludeSet.has(element.type))   return false
             return true
         })
     
     return {
         unprocessed: svgTree,
-        pageProperties: rootElement.properties,
-        elements,
+        pageProperties: rootElement.properties as Record<string, string | number>,
+        elements: options.unescape ? unescapeText(elements) : elements,
     }
 }
 
 
-function parseElements(elements: SvgElement[], flattenDepth: number) {
-    const parsedElements = elements.map(node => visitNode(node,null))
+function parseElements(elements: InputSvgElement[], flattenDepth=9): SvgElement[] {
+    const parsedElements = elements.map(node => visitNode(node, null))
 
     // @ts-expect-error "Excessively deep recursive type"
     return parsedElements.flat(flattenDepth)
 }
 
 
-type ParsedElementTree = ParsedElement | ParsedElementTree[]
+type ParsedElementTree = SvgElement | ParsedElementTree[]
 
-function visitNode(node: SvgElement, parentLayerName: string|null): ParsedElementTree {
+function visitNode(node: InputSvgElement, parentLayerName: string|null): ParsedElementTree {
     const { tagName } = node
     const layerName = node.properties?.["inkscape:label"]
 
-    const childrenNodes = node.children as SvgElement[]
+    const childrenNodes = node.children as InputSvgElement[]
 
     if(childrenNodes) {
         if(tagName === "text" || tagName === "path") {
@@ -76,7 +92,7 @@ function visitNode(node: SvgElement, parentLayerName: string|null): ParsedElemen
         return childrenNodes.map(node => visitNode(node, newLayerName || null))
     }
     else {
-        const parsedElement: ParsedElement = {
+        const parsedElement: SvgElement = {
             type: tagName || null,
             layer: parentLayerName,
             id: node.properties?.id,
@@ -94,18 +110,19 @@ function visitNode(node: SvgElement, parentLayerName: string|null): ParsedElemen
 }
 
 
-function parseGenericNode(node: SvgElement, parentLayer: string|null) {
+function parseGenericNode(node: InputSvgElement, parentLayer: string|null) {
 
-    const parsedElement: ParsedElement = {
-        type: node.tagName!,
+    const parsedElement: SvgElement = {
+        type: node.type || null,
         layer: parentLayer,
         id: node.properties?.id,
         label: node.properties?.["inkscape:label"],
         x: node.properties?.x,
         y: node.properties?.y,
     }
-    const text = getTextFromChildren(node.children as SvgElement[])
+    const text = getTextFromChildren(node.children as InputSvgElement[])
     if(text) {
+        parsedElement.type = "text"
         parsedElement.value = text
     }
 
@@ -113,7 +130,7 @@ function parseGenericNode(node: SvgElement, parentLayer: string|null) {
 }
 
 
-function getTextFromChildren(nodes: SvgElement[]): string | null {
+function getTextFromChildren(nodes: InputSvgElement[]): string | null {
     
     const textLines: string[] = []
     nodes.forEach(node => {

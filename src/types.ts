@@ -1,30 +1,31 @@
-export type ParsedElement = {
+export type SvgElement = {
     layer: string | null // property "inkscape:label"
     type: string | null // "text" | "rect" | "path" | "circle" // property "tagName"
-    value?: string // Only used if type is text
-    id?: string
-    label?: string
-    x?: number
-    y?: number
+} & Partial<{
+    value: string // Only used if type is text
+    id: string
+    label: string
+    x: number
+    y: number
 
     // Rectangle
-    width?: number
-    height?: number
+    width: number
+    height: number
 
     // Circle
-    cx?: number
-    cy?: number
-    r?: number
-}
+    cx: number
+    cy: number
+    r: number
+}>
 
 
 export type SvgRoot = {
     type: "root",
-    children: [SvgElement]
+    children: [InputSvgElement]
 }
 
 
-export type SvgElement = Partial<{
+export type InputSvgElement = Partial<{
     type: "element"
     tagName: "svg" | "g" | "rect" | "tspan" | "text" | "path" | "sodipodi:namedview"
     value: string // Used if type is text
@@ -36,8 +37,8 @@ export type SvgElement = Partial<{
         "style": string, // CSS properties
         x: number
         y: number
-        width: number // Page with in millimeters
-        height: number // Page with in millimeters
+        width: number // Page width in millimeters
+        height: number // Page width in millimeters
         viewBox: string
         "inkscape:version": string
         version: number
@@ -47,6 +48,6 @@ export type SvgElement = Partial<{
         cy: number
         r: number
     }
-    children: SvgElement[],
+    children: InputSvgElement[],
 }>
 

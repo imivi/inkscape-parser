@@ -1,6 +1,6 @@
-# Inkscape-parser
-
 ![Inkscape-parser banner](/docs/banner.png)
+
+# Inkscape-parser
 
 Inkscape-parser parses the elements of an Inkscape SVG file (shapes, text, paths, etc) into an array of objects.
 
