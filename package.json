@@ -1,13 +1,18 @@
 {
   "name": "inkscape-parser",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Reads the content of any inkscape SVG",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": "dist/cli.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "tsx watch test/test",
     "build": "tsc",
+    "prepublish": "pnpm build",
+    "publish": "npm publish",
     "test": "echo test"
   },
   "author": "imivi",
