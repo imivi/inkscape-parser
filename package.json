@@ -1,0 +1,27 @@
+{
+  "name": "inkscape-parser",
+  "version": "1.0.0",
+  "description": "Reads the content of any inkscape SVG",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": "dist/cli.js",
+  "scripts": {
+    "dev": "tsx watch src/test",
+    "build": "tsc",
+    "test": "test"
+  },
+  "author": "imivi",
+  "license": "MIT",
+  "repository": {
+    "type": "github",
+    "url": "git+https://github.com/imivi/inkscape-parser.git"
+  },
+  "devDependencies": {
+    "@types/node": "^20.4.5",
+    "@types/svg-parser": "^2.0.3",
+    "tsx": "^3.12.7"
+  },
+  "dependencies": {
+    "svg-parser": "^2.0.4"
+  }
+}
