@@ -1,4 +1,4 @@
-![Inkscape-parser banner](/docs/banner.png)
+![Inkscape-parser banner](https://github.com/xmuni/inkscape-parser/blob/main/docs/banner.jpg?raw=true)
 
 # Inkscape-parser
 
@@ -63,9 +63,7 @@ This package is built on top of [svg-parser](https://github.com/Rich-Harris/svg-
 
 You can install it [as an NPM package](https://www.npmjs.com/package/inkscape-parser) or run it directly via the included CLI tool.
 
-### Install with NPM
-
-`npm install inkscape-parser`
+**Install from NPM:** `npm install inkscape-parser`
 
 Then import the `parseInkscape` function from this package:
 
@@ -107,6 +105,21 @@ console.log(elements)
 */
 ```
 
+### Options
+
+`parseInkscape` also accepts an **Options** object:
+
+```js
+const defaultOptions = {
+    include: [], // Only the listed inkscape tag names will be returned
+    exclude: [], // None of the listed inkscape tag names will be returned
+    unescape: true, // Escape any HTML entities inside text elements (default: true)
+}
+const { elements } = parseInkscape(svgString, defaultOptions)
+```
+
+### Page properties and unprocessed elements
+
 `parseInkscape` also returns the page properties (width, height, etc) and the tree of unprocessed elements as parsed by [svg-parser](https://github.com/Rich-Harris/svg-parser).
 
 ```js
@@ -134,7 +147,7 @@ Output:
 }
 ```
 
-### Use via the CLI (requires Node.js)
+## CLI usage
 
 `npx inkscape-parser ./drawing.svg ./output.json`
 

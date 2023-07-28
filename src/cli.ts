@@ -1,17 +1,23 @@
 #!/usr/bin/env node
 
-import { parseInkscape } from "./index"
 import fs from "fs"
+import { parseInkscape } from "."
 
 
-if(process.argv.length < 4) {
-    console.log("Error: too few arguments provided. Please provide the path to the svg file and an output path (.json)")
-}
+function cli() {
+    if(process.argv.length < 4) {
+        console.log("Error: too few arguments provided. Please provide the path to the svg file and an output path (.json)")
+        return
+    }
+    const inputPath  = process.argv[2];
+    const outputPath = process.argv[3];
 
-else {
-    const inputPath  = process.argv[2]
-    const outputPath = process.argv[3]
-    
+    [inputPath,outputPath].forEach(path => {
+        if(!fs.existsSync(path)) {
+            console.log("Error: file not found.", path)
+            return
+        }
+    });
     
     const svgText = fs.readFileSync(inputPath, { encoding: "utf-8" })
     
@@ -23,3 +29,5 @@ else {
         { encoding: "utf-8" }
     )
 }
+
+cli()
