@@ -114,6 +114,7 @@ const defaultOptions = {
     include: [], // Only the listed inkscape tag names will be returned
     exclude: [], // None of the listed inkscape tag names will be returned
     unescape: true, // Escape any HTML entities inside text elements (default: true)
+    layerSeparator: ".", // Used to delimit the names of parent layers (e.g.: parent.child.subchild)
 }
 const { elements } = parseInkscape(svgString, defaultOptions)
 ```

@@ -15,6 +15,7 @@ type Options = {
     include: string[]
     exclude: string[]
     unescape: boolean
+    layerSeparator: string
 }
 
 const defaultOptions: Options = {
@@ -22,13 +23,14 @@ const defaultOptions: Options = {
     exclude: ["sodipodi:namedview", "defs", "g"],
     include: [],
     unescape: true,
+    layerSeparator: ".",
 }
 
 
 type Output = {
-    unprocessed: SvgRoot,
-    pageProperties: Record<string, string | number>,
-    elements: SvgElement[],
+    unprocessed: SvgRoot
+    pageProperties: Record<string, string | number>
+    elements: SvgElement[]
 }
 
 /**
@@ -50,7 +52,7 @@ export function parseInkscape(svgString: string, customOptions: Partial<Options>
     const svgElements = rootElement.children as InputSvgElement[]
 
     // Parse elements and filter out those excluded
-    const elements = parseElements(svgElements)
+    const elements = parseElements(svgElements, options.layerSeparator)
         .filter(element => {
             if(element.type && includeSet.size>0 && !includeSet.has(element.type))  return false
             if(element.type && excludeSet.size>0 && excludeSet.has(element.type))   return false
@@ -65,8 +67,8 @@ export function parseInkscape(svgString: string, customOptions: Partial<Options>
 }
 
 
-function parseElements(elements: InputSvgElement[], flattenDepth=9): SvgElement[] {
-    const parsedElements = elements.map(node => visitNode(node, null))
+function parseElements(elements: InputSvgElement[], layerSeparator: string, flattenDepth=9): SvgElement[] {
+    const parsedElements = elements.map(node => visitNode(node, null, layerSeparator))
 
     // @ts-expect-error "Excessively deep recursive type"
     return parsedElements.flat(flattenDepth)
@@ -75,7 +77,7 @@ function parseElements(elements: InputSvgElement[], flattenDepth=9): SvgElement[
 
 type ParsedElementTree = SvgElement | ParsedElementTree[]
 
-function visitNode(node: InputSvgElement, parentLayerName: string|null): ParsedElementTree {
+function visitNode(node: InputSvgElement, parentLayerName: string|null, layerSeparator: string): ParsedElementTree {
     const { tagName } = node
     const layerName = node.properties?.["inkscape:label"]
 
@@ -90,11 +92,11 @@ function visitNode(node: InputSvgElement, parentLayerName: string|null): ParsedE
     if(childrenNodes && childrenNodes.length > 0) {
         let newLayerName = parentLayerName || layerName
         if(parentLayerName && layerName) {
-            newLayerName = [parentLayerName,layerName].join(".")
+            newLayerName = [parentLayerName,layerName].join(layerSeparator)
         }
         
         // const newLayerName = parentLayerName ? [parentLayerName,layerName].join(".") : layerName
-        return childrenNodes.map(node => visitNode(node, newLayerName || null))
+        return childrenNodes.map(node => visitNode(node, newLayerName || null, layerSeparator))
     }
     else {
         const parsedElement: SvgElement = {
