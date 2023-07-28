@@ -19,7 +19,7 @@ type Options = {
 
 const defaultOptions: Options = {
     // flat: 9,
-    exclude: ["sodipodi:namedview", "defs"],
+    exclude: ["sodipodi:namedview", "defs", "g"],
     include: [],
     unescape: true,
 }
@@ -118,7 +118,7 @@ function visitNode(node: InputSvgElement, parentLayerName: string|null): ParsedE
 function parseGenericNode(node: InputSvgElement, parentLayer: string|null) {
 
     const parsedElement: SvgElement = {
-        type: node.type || null,
+        type: node.tagName || null,
         layer: parentLayer,
         id: node.properties?.id,
         label: node.properties?.["inkscape:label"],
@@ -139,7 +139,7 @@ function getTextFromChildren(nodes: InputSvgElement[]): string | null {
     
     const textLines: string[] = []
     nodes.forEach(node => {
-        if(node.children && node.children[0].value) {
+        if(node.children && node.children[0]?.value) {
             textLines.push(node.children[0].value)
         }
     })
